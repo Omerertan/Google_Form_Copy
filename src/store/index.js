@@ -78,9 +78,9 @@ export default new Vuex.Store({
     ],
     card: {
       id: 1,
-      name: "",
+      name: "Soru",
       image: "",
-      answerType: "Soru tipi",
+      answerType: "Kısa Yanıt",
       answers: [],
     },
     multipleChoiceAnswer: {
@@ -149,21 +149,55 @@ export default new Vuex.Store({
     setHeaderDescription(state, value) {
       state.formDescription = value;
     },
+    addQuestion(state, value) {
+      // let l = state.questionArray.length;
+      let item = {
+        id: value,
+        name: "Soru ",
+        image: "",
+        answerType: "Kısa Yanıt",
+        answers: [],
+      };
+      // state.questionArray.push(item);
+      // console.log("Sorular: ", state.questionArray);
+      // console.log("id: ", value);
+      state.questionArray.splice(value, 0, item);
+      for (let index = 0; index < state.questionArray.length; index++) {
+        state.questionArray[index].id = index;
+      }
+    },
+    copyQuestion(state, value) {
+      // console.log("copy: ", value);
+      let item = {
+        id: value.id,
+        name: value.name,
+        image: value.image,
+        answerType: value.answerType,
+        answers: value.answers,
+      };
+      state.questionArray.splice(item.id, 0, item);
+      for (let index = 0; index < state.questionArray.length; index++) {
+        state.questionArray[index].id = index;
+      }
+    },
+    removeQuestion(state, value) {
+      let item = { id: value.id };
+      let element = state.questionArray.findIndex((x) => x.id === item.id);
+      if (element >= 0) {
+        state.questionArray.splice(element, 1);
+      }
+      // console.log(element);
+    },
     updateQuestionList(state, value) {
-      let item = state.questionArray.findIndex((x) => x.id === value.id);
+      let item = state.questionArray.find((x) => x.id === value.id);
       if (item) {
         item.name = value.name;
       }
     },
-    setCardId(state, { newValue, oldValue }) {
-      let moveItem = state.questionArray.find((x) => x.id === oldValue);
-      let item = state.questionArray.find((x) => x.id === newValue);
-      if (item && moveItem) {
-        item.id = item.id + 1;
-        moveItem.id = newValue;
+    setDraggableQuestion(state) {
+      for (let index = 0; index < state.questionArray.length; index++) {
+        state.questionArray[index].id = index;
       }
-      // console.log("Actual: ", state.questionArray);
-      // state.questionArray = value;
     },
   },
   actions: {},

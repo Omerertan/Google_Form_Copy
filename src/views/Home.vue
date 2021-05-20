@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <v-container fluid class="home">
     <v-row no-gutters>
       <HeaderCard />
     </v-row>
@@ -10,21 +10,16 @@
       :scroll-sensitivity="150"
     >
       <transition-group type="transition">
-        <v-row
-          v-for="element in qList"
-          :key="element.id"
-          :id="element.id"
-          no-gutters
-        >
+        <v-row v-for="element in qList" :key="element.id" no-gutters>
           <Card :question="element" :id="element.id" />
           <p>{{ element }}</p>
         </v-row>
       </transition-group>
     </draggable>
 
-    <p>Previous Index: {{ oldIndex }}</p>
-    <p>Next Index: {{ newIndex }}</p>
-  </div>
+    <!-- <p>Previous Index: {{ oldIndex }}</p>
+    <p>Next Index: {{ newIndex }}</p> -->
+  </v-container>
 </template>
 
 <script>
@@ -39,26 +34,15 @@ export default {
     draggable,
   },
   data: () => ({
-    questionArray: [],
-    oldIndex: "",
-    newIndex: "",
+    // oldIndex: "",
+    // newIndex: "",
   }),
-  created() {
-    this.getQuestions();
-  },
+
   methods: {
     onEnd(evt) {
-      console.log(evt.newIndex);
       this.oldIndex = evt.oldIndex;
       this.newIndex = evt.newIndex;
-      this.$store.commit("setCardId", {
-        newValue: evt.newIndex,
-        oldValue: evt.oldIndex,
-      });
-    },
-    getQuestions() {
-      this.questionArray = this.$store.getters.getQuestionArray;
-      console.log(this.questionArray);
+      this.$store.commit("setDraggableQuestion");
     },
   },
   computed: {
