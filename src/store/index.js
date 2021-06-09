@@ -12,77 +12,87 @@ export default new Vuex.Store({
       {
         id: 0,
         name: "Soru 1",
-        answerType: "Kısa Yanıt",
+        image: "",
+        answerType: "ShortAnswer",
+        answers: [],
       },
       {
         id: 1,
         name: "Soru 2",
-        answerType: "Paragraf",
+        image: "",
+        answerType: "Paragraph",
+        answers: [],
       },
       {
         id: 2,
         name: "Soru 3",
-        answerType: "Paragraf",
+        image: "",
+        answerType: "Paragraph",
+        answers: [],
       },
       {
         id: 3,
         name: "Soru 4",
-        answerType: "Paragraf",
+        image: "",
+        answerType: "MultipleChoiceAnswer",
+        answers: [
+          {
+            id: 1,
+            answer: "1.Yanıt",
+          },
+          {
+            id: 2,
+            answer: "2.Yanıt",
+          },
+          {
+            id: 3,
+            answer: "3.Yanıt",
+          },
+        ],
       },
     ],
     answerList: [
       {
         id: 1,
         name: "Kısa Yanıt",
+        componentName: "ShortAnswer",
       },
       {
         id: 2,
         name: "Paragraf",
+        componentName: "Paragraph",
       },
       {
         id: 3,
         name: "Çoktan seçmeli",
+        componentName: "MultipleChoiceAnswer",
       },
       {
         id: 4,
         name: "Onay kutuları",
+        componentName: "CheckBoxAnswer",
       },
       {
         id: 5,
         name: "Açılır menü",
+        componentName: "DropDownMenu",
       },
       {
         id: 6,
         name: "Doğrusal ölçek",
+        componentName: "LinearScale",
       },
       {
         id: 7,
         name: "Çoktan seçmeli tablosu",
+        componentName: "MultipleChoiceTable",
       },
       {
         id: 8,
         name: "Onay kutusu tablosu",
-      },
-      {
-        id: 9,
-        name: "Onay kutusu tablosu",
-      },
-      {
-        id: 10,
-        name: "Tarih",
-      },
-      {
-        id: 11,
-        name: "Saat",
+        componentName: "CheckBoxTable",
       },
     ],
-    card: {
-      id: 1,
-      name: "Soru",
-      image: "",
-      answerType: "Kısa Yanıt",
-      answers: [],
-    },
     multipleChoiceAnswer: {
       id: 1,
       title: "1.seçenek",
@@ -155,7 +165,7 @@ export default new Vuex.Store({
         id: value,
         name: "Soru ",
         image: "",
-        answerType: "Kısa Yanıt",
+        answerType: "ShortAnswer",
         answers: [],
       };
       // state.questionArray.push(item);
@@ -194,10 +204,34 @@ export default new Vuex.Store({
         item.name = value.name;
       }
     },
+    setQuestionImage(state, value) {
+      let obj = {
+        id: value.id,
+        imageUrl: value.image,
+      };
+      let item = state.questionArray.find((x) => x.id === obj.id);
+      item.image = obj.imageUrl;
+      // console.log(value);
+    },
     setDraggableQuestion(state) {
       for (let index = 0; index < state.questionArray.length; index++) {
         state.questionArray[index].id = index;
       }
+    },
+    removeQuestionImage(state, id) {
+      let item = state.questionArray.find((x) => x.id === id);
+      item.image = "";
+    },
+    addAnswer(state, id) {
+      let item = state.questionArray.find((x) => x.id === id);
+      let total = item.answers.length;
+      total != 0 || total != null ? total++ : total;
+      item.answers.push({ id: total, answer: total + ". Yanıt" });
+    },
+    removeAnswer(state, value) {
+      let item = state.questionArray.find((x) => x.id === value.questionId);
+      let index = item.answers.findIndex((x) => x.id === value.answerId);
+      item.answers.splice(index, 1);
     },
   },
   actions: {},

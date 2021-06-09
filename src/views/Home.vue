@@ -54,7 +54,7 @@ export default {
 </script>
 <style scoped>
 .home {
-  width: 770px;
+  width: 800px !important;
   margin-left: auto;
   margin-right: auto;
   margin-top: 110px;

@@ -34,14 +34,15 @@
               v-show="false"
               ref="questionImage"
               type="file"
-              @change="addQuestionImage"
+              @change="addQuestionImage($event, item)"
             />
+            <!-- <p>{{ item.image }}</p> -->
           </v-col>
           <v-col cols="12" sm="5" class="d-flex align-end py-2">
             <v-select
               :items="getAnswerList"
               item-text="name"
-              item.value="name"
+              item-value="componentName"
               :option="getAnswerList"
               v-model="item.answerType"
               dense
@@ -52,42 +53,31 @@
           </v-col>
         </v-row>
 
-        <v-row class="ml-1 mr-1 d-flex col-sm-12">
-          <v-col cols="12" sm="10" class="pa-1"
-            ><v-text-field label="Kısa yanıt metni"></v-text-field>
-          </v-col>
-          <v-col
-            cols="12"
-            sm="1"
-            class="pa-0 d-flex mx-auto mt-4"
-            v-if="editForm"
-          >
-            <v-btn class="pa-0" small fab depressed icon @click="removeAnswer">
-              <v-icon light> mdi-close </v-icon>
-            </v-btn>
-          </v-col>
-          <v-col cols="12" sm="1" class="pa-0 d-flex mx-auto mt-4">
-            <v-btn
-              class="pa-0"
-              small
-              fab
-              depressed
-              icon
-              append-icon="mdi-image"
-              @click="$refs.answerImage.click()"
-            >
-              <v-icon light> mdi-image-outline </v-icon>
-            </v-btn>
-            <input
-              v-show="false"
-              ref="answerImage"
-              type="file"
-              @change="addAnswerImage"
-            />
-          </v-col>
+        <v-row class="ml-1 mr-1 d-flex col-sm-12" no-gutters v-if="item.image">
+          <ImageInput :imageString="item.image" :id="item.id" />
         </v-row>
 
-        <v-row class="d-flex mx-auto pt-4 topStick" v-if="editForm">
+        <v-row class="ml-1 mr-1 d-flex col-sm-12" v-if="editForm" no-gutters>
+          <v-col cols="12" sm="10" class="pa-1">
+            <component
+              :is="item.answerType"
+              :answerList="item.answers"
+              :id="item.id"
+            >
+              <CheckBoxAnswer />
+              <CheckBoxTable />
+              <DropDownMenu />
+              <LinearScale />
+              <MultipleChoiceAnswer />
+              <MultipleChoiceTable />
+              <Paragraph />
+              <ShortAnswer />
+            </component>
+          </v-col>
+          <!-- question image and question remove icon will be deleted from here -->
+        </v-row>
+
+        <v-row class="d-flex mx-auto pt-4 topStick">
           <v-col
             class="d-flex justify-end py-0 rightStick"
             cols="12"
@@ -141,9 +131,28 @@
 </template>
 
 <script>
+import CheckBoxAnswer from "./answers/CheckBoxAnswer";
+import CheckBoxTable from "./answers/CheckBoxTable";
+import DropDownMenu from "./answers/DropDownMenu";
+import LinearScale from "./answers/LinearScale";
+import MultipleChoiceAnswer from "./answers/MultipleChoiceAnswer";
+import MultipleChoiceTable from "./answers/MultipleChoiceTable";
+import Paragraph from "./answers/Paragraph";
+import ShortAnswer from "./answers/ShortAnswer";
+import ImageInput from "./ImageInput";
 export default {
   name: "Card",
-  components: {},
+  components: {
+    CheckBoxAnswer,
+    CheckBoxTable,
+    DropDownMenu,
+    LinearScale,
+    MultipleChoiceAnswer,
+    MultipleChoiceTable,
+    Paragraph,
+    ShortAnswer,
+    ImageInput,
+  },
   data: () => ({
     visible: undefined,
     editForm: false,
@@ -183,7 +192,6 @@ export default {
     addQuestionImage(e) {
       const files = e.target.files;
       this.imageBase64(files, "question");
-      // console.log("Soru image: ", this.questionImageUrl);
     },
     addAnswerImage(e) {
       const files = e.target.files;
@@ -192,7 +200,6 @@ export default {
     },
     imageBase64(files, t) {
       if (files[0] !== undefined) {
-        // console.log(files[0]);
         if (files[0].name.lastIndexOf(".") <= 0) {
           return;
         }
@@ -200,9 +207,11 @@ export default {
         fr.readAsDataURL(files[0]);
 
         fr.addEventListener("load", () => {
-          this.imageFileUrl = fr.result;
           if (t == "question") {
-            this.questionImageUrl = fr.result;
+            this.$store.commit("setQuestionImage", {
+              id: this.id,
+              image: fr.result,
+            });
           } else {
             this.answerImageUrl = fr.result;
           }
@@ -244,20 +253,26 @@ export default {
   height: 32px;
   border-right: 1.5px solid #e0e0e0;
 }
+
 .topStick {
   border-top: 1px solid #e0e0e0;
 }
+
 .editMenu {
   background-color: white;
-  border: 1px solid #dadce0;
-  border-radius: 8px;
   padding: 10px;
+  border: 1.5px solid #dadce0;
+  border-radius: 8px;
+  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2),
+    0 1px 1px 0 rgba(0, 0, 0, 0.141), 0 1px 3px 0 rgba(0, 0, 0, 0.122);
 }
+
 .stick {
   width: 100%;
   height: 12px;
   background-color: white;
 }
+
 .stick:hover {
   cursor: all-scroll;
 }

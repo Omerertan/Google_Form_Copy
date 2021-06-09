@@ -1,9 +1,11 @@
 <template>
-  <v-text-field label="Kısa yanıt metni"></v-text-field>
+  <v-container fluid>
+    <p>LinearScale</p>
+  </v-container>
 </template>
 <script>
 export default {
-  name: "ShortAnswer",
+  name: "LinearScale",
 };
 </script>
 <style scoped></style>
